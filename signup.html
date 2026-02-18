@@ -1,0 +1,201 @@
+{% extends 'base.html' %} {% block content %}
+<div class="auth-container">
+  <div class="panel auth-panel">
+    <div class="auth-header">
+      <h2><i class="fas fa-user-plus"></i> REQUEST CLEARANCE</h2>
+      <p class="auth-subtitle">New Operator Registration</p>
+    </div>
+
+    <form method="POST" action="/signup" class="auth-form">
+      <div class="form-group">
+        <label class="form-label">CALL SIGN</label>
+        <input
+          type="text"
+          name="username"
+          class="form-control"
+          required
+          placeholder="Enter unique operator identifier"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">SECURE CONTACT</label>
+        <input
+          type="email"
+          name="email"
+          class="form-control"
+          required
+          placeholder="Encrypted contact channel"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">AUTHENTICATION KEY</label>
+        <input
+          type="password"
+          name="password"
+          class="form-control"
+          required
+          placeholder="Create secure passphrase"
+        />
+        <div class="password-strength">
+          <div class="strength-bar"></div>
+          <span class="strength-text">PASSWORD STRENGTH: LOW</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">CONFIRM AUTH KEY</label>
+        <input
+          type="password"
+          name="confirm_password"
+          class="form-control"
+          required
+          placeholder="Re-enter passphrase"
+        />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-military btn-large">
+          <i class="fas fa-user-shield"></i> REQUEST ACCESS
+        </button>
+        <a href="/login" class="auth-link">
+          <i class="fas fa-sign-in-alt"></i> EXISTING OPERATOR?
+        </a>
+      </div>
+    </form>
+
+    <div class="security-notice">
+      <p>
+        <i class="fas fa-info-circle"></i> All credentials are hashed using
+        PBKDF2-SHA256 with 100,000 iterations
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .auth-container {
+    max-width: 500px;
+    margin: 50px auto;
+  }
+
+  .auth-panel {
+    background: linear-gradient(
+      135deg,
+      rgba(15, 25, 40, 0.95),
+      rgba(10, 20, 35, 0.95)
+    );
+    border: 1px solid rgba(0, 255, 157, 0.2);
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 255, 157, 0.1);
+  }
+
+  .auth-subtitle {
+    color: var(--text-secondary);
+    margin-top: 10px;
+  }
+
+  .auth-form {
+    margin-bottom: 25px;
+  }
+
+  .password-strength {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .strength-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 71, 87, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .strength-bar::after {
+    content: "";
+    display: block;
+    width: 30%;
+    height: 100%;
+    background: var(--warning-red);
+    border-radius: 2px;
+  }
+
+  .strength-text {
+    font-size: 0.8rem;
+    color: var(--warning-red);
+    font-family: "Orbitron", sans-serif;
+  }
+
+  .form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin-top: 30px;
+  }
+
+  .auth-link {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s ease;
+  }
+
+  .auth-link:hover {
+    color: var(--accent-green);
+    text-decoration: underline;
+  }
+</style>
+
+<script>
+  // Password strength indicator
+  const passwordInput = document.querySelector('input[name="password"]');
+  const strengthBar = document.querySelector(".strength-bar");
+  const strengthText = document.querySelector(".strength-text");
+
+  passwordInput.addEventListener("input", function () {
+    const password = this.value;
+    let strength = 0;
+
+    // Length check
+    if (password.length >= 8) strength += 25;
+    if (password.length >= 12) strength += 25;
+
+    // Complexity checks
+    if (/[A-Z]/.test(password)) strength += 25;
+    if (/[0-9]/.test(password)) strength += 25;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+
+    // Cap at 100
+    strength = Math.min(strength, 100);
+
+    // Update display
+    strengthBar.style.background = `linear-gradient(90deg, 
+        ${strength >= 50 ? "var(--accent-green)" : "var(--warning-red)"} ${strength}%, 
+        rgba(255, 71, 87, 0.3) ${strength}%)`;
+
+    if (strength < 50) {
+      strengthText.textContent = "PASSWORD STRENGTH: WEAK";
+      strengthText.style.color = "var(--warning-red)";
+    } else if (strength < 75) {
+      strengthText.textContent = "PASSWORD STRENGTH: MODERATE";
+      strengthText.style.color = "var(--accent-blue)";
+    } else {
+      strengthText.textContent = "PASSWORD STRENGTH: STRONG";
+      strengthText.style.color = "var(--accent-green)";
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COMMSEC-ONE | Military Secure Comms</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div class="status-left">
+          <span class="system-status"
+            ><i class="fas fa-shield-alt"></i> COMMSEC-ONE v2.7</span
+          >
+          <span class="crypto-status"
+            ><i class="fas fa-key"></i> EE-AES-256 ACTIVE</span
+          >
+        </div>
+        <div class="status-right">
+          <span class="timestamp" id="timestamp">--:--:-- ZULU</span>
+          <span class="connection-status"
+            ><i class="fas fa-satellite-dish"></i> SECURE LINK</span
+          >
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="main-frame">{% block content %}{% endblock %}</div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <div class="footer-left">
+          <span
+            ><i class="fas fa-user-secret"></i> OPERATOR: {% if
+            session.get('user') %}{{ session.get('user') }}{% else
+            %}UNAUTHENTICATED{% endif %}</span
+          >
+        </div>
+        <div class="footer-center">
+          <span>CLASSIFIED: LEVEL ALPHA | EYES ONLY</span>
+        </div>
+        <div class="footer-right">
+          <span><i class="fas fa-network-wired"></i> CHANNEL: ENCRYPTED</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio
+      id="clickSound"
+      src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3"
+      preload="auto"
+    ></audio>
+    <audio
+      id="notificationSound"
+      src="https://assets.mixkit.co/sfx/preview/mixkit-security-system-alarm-937.mp3"
+      preload="auto"
+    ></audio>
+
+    <script>
+      // Update timestamp
+      function updateTimestamp() {
+        const now = new Date();
+        const hours = now.getUTCHours().toString().padStart(2, "0");
+        const minutes = now.getUTCMinutes().toString().padStart(2, "0");
+        const seconds = now.getUTCSeconds().toString().padStart(2, "0");
+        document.getElementById("timestamp").textContent =
+          `${hours}:${minutes}:${seconds} UTC`;
+      }
+      setInterval(updateTimestamp, 1000);
+      updateTimestamp();
+
+      // Play click sound
+      function playClick() {
+        document.getElementById("clickSound").currentTime = 0;
+        document
+          .getElementById("clickSound")
+          .play()
+          .catch((e) => console.log("Audio play failed:", e));
+      }
+
+      // Add click sounds to buttons
+      document.addEventListener("DOMContentLoaded", function () {
+        const buttons = document.querySelectorAll(
+          'button, a[href], input[type="submit"]',
+        );
+        buttons.forEach((button) => {
+          button.addEventListener("click", playClick);
+        });
+      });
+
+      // Auto-scroll chat
+      function scrollToBottom() {
+        const chatBox = document.querySelector(".chat-messages");
+        if (chatBox) {
+          chatBox.scrollTop = chatBox.scrollHeight;
+        }
+      }
+      setTimeout(scrollToBottom, 100);
+    </script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

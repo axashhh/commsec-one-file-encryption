@@ -1,0 +1,444 @@
+{% extends 'base.html' %} {% block content %}
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="dashboard-header">
+    <h1><i class="fas fa-satellite"></i> SECURE COMMS DASHBOARD</h1>
+    <div class="user-controls">
+      <span class="user-badge">
+        <i class="fas fa-user-secret"></i> {{ user }}
+      </span>
+      <a href="/logout" class="btn-military logout-btn">
+        <i class="fas fa-power-off"></i> TERMINATE SESSION
+      </a>
+    </div>
+  </div>
+
+  <!-- Operational Status -->
+  <div class="panel status-display">
+    <div class="status-item">
+      <span class="status-label">ACTIVE OPERATORS:</span>
+      <span class="status-value">{{ users|length }}</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">MESSAGES IN TRANSIT:</span>
+      <span class="status-value">{{ chat|length }}</span>
+    </div>
+    <div class="status-item">
+      <span class="status-label">ENCRYPTION STATUS:</span>
+      <span class="status-value active">EE-AES-256 ACTIVE</span>
+    </div>
+  </div>
+
+  <!-- Main Communication Interface -->
+  <div class="chat-container">
+    <!-- Online Operators -->
+    <div class="user-list">
+      <h3><i class="fas fa-users"></i> ACTIVE OPERATORS</h3>
+      {% for u in users %}
+      <div class="user-item" onclick="selectReceiver('{{ u[0] }}')">
+        <i class="fas fa-user-circle"></i>
+        <span class="username">{{ u[0] }}</span>
+        <span class="user-status online"></span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="chat-wrapper">
+      <!-- Messages Display -->
+      <div class="chat-messages" id="chatMessages">
+        {% for msg in chat %}
+        <div class="message {{ msg.status }}">
+          <div class="message-header">
+            <div class="message-sender">
+              <span class="sender">
+                <i class="fas fa-user"></i> {{ msg.sender }}
+              </span>
+              <span class="message-direction">
+                <i class="fas fa-long-arrow-alt-right"></i>
+              </span>
+              <span class="receiver">
+                <i class="fas fa-user"></i> {{ msg.receiver }}
+              </span>
+            </div>
+            <div class="message-meta">
+              <span class="message-time">
+                <i class="far fa-clock"></i> {{ msg.time }}
+              </span>
+              {% if msg.sender == user %}
+              <form
+                action="/delete_message/{{ msg.id }}"
+                method="GET"
+                class="delete-form"
+                onsubmit="return confirmDelete();"
+              >
+                <button type="submit" class="btn-danger btn-small">
+                  <i class="fas fa-trash-alt"></i> DELETE
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="message-content">
+            {% if msg.file %}
+            <div class="file-message">
+              <i class="fas fa-paperclip"></i>
+              <a
+                href="/view_file/{{ msg.id }}"
+                target="_blank"
+                class="file-link"
+              >
+                {{ msg.file }}
+              </a>
+              <span class="file-size">[ENCRYPTED FILE]</span>
+            </div>
+            {% endif %} {% if msg.text %}
+            <div
+              class="text-message {{ 'encrypted-text' if not msg.can_decrypt else 'decrypted-text' }}"
+            >
+              {% if msg.can_decrypt %}
+              <i class="fas fa-lock-open"></i>
+              {{ msg.text }} {% else %}
+              <i class="fas fa-lock"></i>
+              <span class="encrypted-indicator">[ENCRYPTED CONTENT]</span>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="message-security">
+            {% if msg.can_decrypt %}
+            <span class="security-badge decrypted">
+              <i class="fas fa-check-circle"></i> DECRYPTED
+            </span>
+            {% else %}
+            <span class="security-badge encrypted">
+              <i class="fas fa-lock"></i> ENCRYPTED
+            </span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Input Panel -->
+      <div class="chat-input-container">
+        <form
+          method="POST"
+          action="/send"
+          enctype="multipart/form-data"
+          class="chat-form"
+          id="chatForm"
+        >
+          <select
+            name="receiver"
+            class="receiver-select"
+            id="receiverSelect"
+            required
+          >
+            <option value="" disabled selected>SELECT OPERATOR</option>
+            {% for u in users %}
+            <option value="{{ u[0] }}">{{ u[0] }}</option>
+            {% endfor %}
+          </select>
+
+          <textarea
+            name="message"
+            class="message-input"
+            id="messageInput"
+            placeholder="Type secure message... (EE-AES-256 encrypted)"
+            rows="1"
+          ></textarea>
+
+          <label for="fileInput" class="file-input-label">
+            <i class="fas fa-paperclip"></i>
+            <span>ATTACH</span>
+            <input
+              type="file"
+              name="file"
+              id="fileInput"
+              style="display: none"
+            />
+          </label>
+
+          <button type="submit" class="btn-military">
+            <i class="fas fa-paper-plane"></i> TRANSMIT
+          </button>
+        </form>
+
+        <div id="uploadStatus" style="display: none; margin-top: 10px">
+          <div class="spinner"></div>
+          <span style="margin-left: 10px">ENCRYPTING AND TRANSMITTING...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(0, 255, 157, 0.2);
+  }
+
+  .user-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .user-badge {
+    background: rgba(0, 255, 157, 0.1);
+    border: 1px solid rgba(0, 255, 157, 0.3);
+    padding: 8px 15px;
+    border-radius: 3px;
+    font-family: "Orbitron", sans-serif;
+    font-size: 0.9rem;
+  }
+
+  .user-badge i {
+    margin-right: 8px;
+  }
+
+  .status-display {
+    display: flex;
+    justify-content: space-around;
+    background: linear-gradient(
+      135deg,
+      rgba(15, 25, 40, 0.9),
+      rgba(10, 20, 35, 0.9)
+    );
+    margin-bottom: 25px;
+  }
+
+  .status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 20px;
+  }
+
+  .status-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+  }
+
+  .status-value {
+    color: var(--accent-green);
+    font-family: "Orbitron", sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .status-value.active {
+    color: var(--accent-green);
+    text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+  }
+
+  .user-list {
+    border-right: 1px solid rgba(0, 255, 157, 0.1);
+  }
+
+  .user-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .user-item:hover {
+    background: rgba(0, 184, 255, 0.1);
+  }
+
+  .user-item i {
+    color: var(--accent-blue);
+    font-size: 1.2rem;
+  }
+
+  .username {
+    flex: 1;
+    font-weight: 600;
+  }
+
+  .user-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 10px var(--accent-green);
+  }
+
+  .message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .message-sender {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .message-direction {
+    color: var(--accent-blue);
+  }
+
+  .message-meta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .delete-form {
+    margin: 0;
+  }
+
+  .btn-small {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .file-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: rgba(0, 184, 255, 0.1);
+    border-radius: 3px;
+  }
+
+  .file-link {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .file-link:hover {
+    text-decoration: underline;
+  }
+
+  .file-size {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-left: auto;
+  }
+
+  .text-message {
+    padding: 10px;
+    background: rgba(10, 20, 30, 0.5);
+    border-radius: 3px;
+    font-family: "Courier New", monospace;
+    line-height: 1.5;
+  }
+
+  .decrypted-text {
+    border-left: 3px solid var(--accent-green);
+    padding-left: 15px;
+  }
+
+  .encrypted-text {
+    border-left: 3px solid var(--warning-red);
+    padding-left: 15px;
+    color: var(--text-secondary);
+  }
+
+  .encrypted-indicator {
+    font-family: "Orbitron", sans-serif;
+    letter-spacing: 1px;
+  }
+
+  .message-security {
+    margin-top: 10px;
+  }
+
+  .security-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-family: "Orbitron", sans-serif;
+  }
+
+  .security-badge.decrypted {
+    background: rgba(0, 255, 157, 0.1);
+    color: var(--accent-green);
+    border: 1px solid rgba(0, 255, 157, 0.3);
+  }
+
+  .security-badge.encrypted {
+    background: rgba(255, 71, 87, 0.1);
+    color: var(--warning-red);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+  }
+
+  #messageInput {
+    resize: none;
+    min-height: 45px;
+    max-height: 100px;
+    transition: height 0.2s ease;
+  }
+</style>
+
+<script>
+  function selectReceiver(username) {
+    document.getElementById("receiverSelect").value = username;
+    playClick();
+  }
+
+  function confirmDelete() {
+    return confirm(
+      "CONFIRM MESSAGE DESTRUCTION?\nThis action is irreversible.",
+    );
+  }
+
+  document.getElementById("chatForm").addEventListener("submit", function (e) {
+    const fileInput = document.getElementById("fileInput");
+    if (fileInput.files.length > 0) {
+      document.getElementById("uploadStatus").style.display = "flex";
+    }
+  });
+
+  // Auto-expand textarea
+  const textarea = document.getElementById("messageInput");
+  textarea.addEventListener("input", function () {
+    this.style.height = "auto";
+    this.style.height = Math.min(this.scrollHeight, 100) + "px";
+  });
+
+  // Auto-scroll to bottom
+  function scrollToBottom() {
+    const chatMessages = document.getElementById("chatMessages");
+    if (chatMessages) {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  }
+
+  // Initial scroll
+  setTimeout(scrollToBottom, 100);
+
+  // Periodic check for new messages (optional - could be implemented with AJAX)
+  setInterval(function () {
+    // In a real implementation, you'd fetch new messages here
+    scrollToBottom();
+  }, 3000);
+</script>
+{% endblock %}

@@ -1,0 +1,313 @@
+{% extends 'base.html' %} {% block content %}
+<div class="landing-container">
+  <!-- Header with Logo -->
+  <div
+    class="panel text-center"
+    style="background: transparent; border: none; box-shadow: none"
+  >
+    <div class="logo-container">
+      <div class="logo-icon">
+        <i class="fas fa-shield-alt"></i>
+      </div>
+      <h1>COMMSEC-ONE</h1>
+      <p class="subtitle">MILITARY GRADE SECURE COMMUNICATIONS</p>
+    </div>
+  </div>
+
+  <!-- Mission Briefing -->
+  <div class="panel mission-briefing">
+    <div class="section-header">
+      <h2><i class="fas fa-crosshairs"></i> MISSION BRIEFING</h2>
+    </div>
+    <div class="mission-content">
+      <p>
+        COMMSEC-ONE provides end-to-end encrypted battlefield communication with
+        EE-AES-256 quantum-resistant cryptography.
+      </p>
+      <p>
+        All transmissions are secured using dynamic key derivation and
+        zero-knowledge architecture.
+      </p>
+      <div class="crypto-status-display">
+        <div class="crypto-status-item active">
+          <i class="fas fa-check-circle"></i>
+          <span>EE-AES-256 ENCRYPTION ACTIVE</span>
+        </div>
+        <div class="crypto-status-item active">
+          <i class="fas fa-check-circle"></i>
+          <span>DYNAMIC S-BOX ROTATION</span>
+        </div>
+        <div class="crypto-status-item active">
+          <i class="fas fa-check-circle"></i>
+          <span>QUANTUM RESISTANT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Capabilities Grid -->
+  <div class="capabilities-grid">
+    <div class="panel capability">
+      <div class="capability-icon">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <h3>IDENTITY PROTECTION</h3>
+      <p>Anonymous authentication with zero credential exposure on network</p>
+    </div>
+
+    <div class="panel capability">
+      <div class="capability-icon">
+        <i class="fas fa-file-shield"></i>
+      </div>
+      <h3>SECURE FILE TRANSFER</h3>
+      <p>Encrypted transmission of documents, images, and multimedia</p>
+    </div>
+
+    <div class="panel capability">
+      <div class="capability-icon">
+        <i class="fas fa-satellite"></i>
+      </div>
+      <h3>REAL-TIME ENCRYPTION</h3>
+      <p>Messages encrypted before transmission with forward secrecy</p>
+    </div>
+
+    <div class="panel capability">
+      <div class="capability-icon">
+        <i class="fas fa-eraser"></i>
+      </div>
+      <h3>ZERO-FOOTPRINT</h3>
+      <p>No message persistence on server after decryption</p>
+    </div>
+  </div>
+
+  <!-- Authentication Zone -->
+  <div class="panel auth-zone">
+    <h2><i class="fas fa-terminal"></i> ACCESS CONTROL</h2>
+    <p class="auth-subtitle">
+      Authentication Required for Secure Channel Access
+    </p>
+
+    <div class="auth-buttons">
+      <a href="{{ url_for('signup') }}">
+        <button class="btn-military btn-large">
+          <i class="fas fa-user-plus"></i> REQUEST ACCESS
+        </button>
+      </a>
+
+      <a href="{{ url_for('login') }}">
+        <button class="btn-military btn-large">
+          <i class="fas fa-sign-in-alt"></i> SECURE LOGIN
+        </button>
+      </a>
+    </div>
+
+    <div class="security-notice">
+      <p>
+        <i class="fas fa-exclamation-triangle"></i> WARNING: Unauthorized access
+        attempts are logged and monitored
+      </p>
+    </div>
+  </div>
+
+  <!-- System Status -->
+  <div class="panel system-status-panel">
+    <h2><i class="fas fa-server"></i> SYSTEM STATUS</h2>
+    <div class="status-indicators">
+      <div class="status-indicator online">
+        <span class="status-dot"></span>
+        ENCRYPTION ENGINE: ONLINE
+      </div>
+      <div class="status-indicator online">
+        <span class="status-dot"></span>
+        KEY MANAGEMENT: ACTIVE
+      </div>
+      <div class="status-indicator online">
+        <span class="status-dot"></span>
+        NETWORK SECURITY: GREEN
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .landing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .logo-container {
+    padding: 30px 0;
+  }
+
+  .logo-icon {
+    font-size: 4rem;
+    color: var(--accent-green);
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
+  }
+
+  .subtitle {
+    color: var(--accent-blue);
+    font-family: "Orbitron", sans-serif;
+    letter-spacing: 3px;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  .mission-briefing {
+    background: linear-gradient(
+      135deg,
+      rgba(10, 20, 30, 0.9),
+      rgba(15, 30, 45, 0.9)
+    );
+    border: 1px solid rgba(0, 255, 157, 0.2);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 255, 157, 0.1);
+  }
+
+  .mission-content {
+    line-height: 1.6;
+  }
+
+  .mission-content p {
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+  }
+
+  .crypto-status-display {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .crypto-status-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 15px;
+    background: rgba(0, 255, 157, 0.1);
+    border: 1px solid rgba(0, 255, 157, 0.2);
+    border-radius: 3px;
+  }
+
+  .crypto-status-item i {
+    color: var(--accent-green);
+  }
+
+  .capabilities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+  }
+
+  .capability {
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .capability:hover {
+    transform: translateY(-5px);
+  }
+
+  .capability-icon {
+    font-size: 2.5rem;
+    color: var(--accent-blue);
+    margin-bottom: 15px;
+  }
+
+  .capability h3 {
+    color: var(--accent-green);
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+  }
+
+  .capability p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .auth-zone {
+    text-align: center;
+    background: linear-gradient(
+      135deg,
+      rgba(15, 25, 40, 0.9),
+      rgba(10, 20, 35, 0.9)
+    );
+    margin: 30px 0;
+  }
+
+  .auth-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+  }
+
+  .auth-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .btn-large {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+  }
+
+  .security-notice {
+    padding: 15px;
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.2);
+    border-radius: 3px;
+    margin-top: 20px;
+  }
+
+  .security-notice i {
+    color: var(--warning-red);
+    margin-right: 10px;
+  }
+
+  .system-status-panel {
+    margin-top: 30px;
+  }
+
+  .status-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: rgba(10, 20, 30, 0.7);
+    border-radius: 3px;
+  }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    animation: pulse 2s infinite;
+  }
+
+  .status-indicator.online .status-dot {
+    background: var(--accent-green);
+    box-shadow: 0 0 10px var(--accent-green);
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'base.html' %} {% block content %}
+<div class="auth-container">
+  <div class="panel auth-panel">
+    <div class="auth-header">
+      <h2><i class="fas fa-terminal"></i> SECURE LOGIN</h2>
+      <p class="auth-subtitle">Operator Authentication Required</p>
+    </div>
+
+    <form method="POST" action="/login" class="auth-form">
+      <div class="form-group">
+        <label class="form-label">OPERATOR ID</label>
+        <input
+          type="text"
+          name="username"
+          class="form-control"
+          required
+          placeholder="Enter your call sign"
+          autocomplete="username"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">AUTHENTICATION KEY</label>
+        <input
+          type="password"
+          name="password"
+          class="form-control"
+          required
+          placeholder="Enter secure passphrase"
+          autocomplete="current-password"
+        />
+      </div>
+
+      <div class="form-group">
+        <div class="captcha">
+          <label class="form-label">SECURITY VERIFICATION</label>
+          <div class="captcha-code">
+            <span id="captchaText">X7G9K2</span>
+            <button type="button" class="btn-small" onclick="refreshCaptcha()">
+              <i class="fas fa-redo"></i>
+            </button>
+          </div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Enter code above"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-military btn-large">
+          <i class="fas fa-fingerprint"></i> AUTHENTICATE
+        </button>
+        <a href="/signup" class="auth-link">
+          <i class="fas fa-user-plus"></i> NEW OPERATOR?
+        </a>
+      </div>
+    </form>
+
+    <div class="security-warning">
+      <p>
+        <i class="fas fa-exclamation-triangle"></i> SYSTEM WARNING: Multiple
+        failed attempts will trigger lockdown
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .captcha {
+    margin-top: 20px;
+  }
+
+  .captcha-code {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  #captchaText {
+    flex: 1;
+    background: rgba(0, 255, 157, 0.1);
+    border: 1px solid rgba(0, 255, 157, 0.3);
+    padding: 10px;
+    font-family: "Orbitron", monospace;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    text-align: center;
+    color: var(--accent-green);
+  }
+
+  .security-warning {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.2);
+    border-radius: 3px;
+    text-align: center;
+  }
+
+  .security-warning i {
+    color: var(--warning-red);
+    margin-right: 10px;
+  }
+</style>
+
+<script>
+  function generateCaptcha() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let captcha = "";
+    for (let i = 0; i < 6; i++) {
+      captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return captcha;
+  }
+
+  function refreshCaptcha() {
+    document.getElementById("captchaText").textContent = generateCaptcha();
+    playClick();
+  }
+
+  // Initialize captcha
+  document.addEventListener("DOMContentLoaded", refreshCaptcha);
+</script>
+{% endblock %}
