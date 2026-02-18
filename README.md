@@ -23,6 +23,12 @@ modified AES-based approach (EE-AES) for educational purposes.
 This project is intended strictly for academic and learning purposes.
 It is not a commercial or military-grade product.
 
+## 📸 Screenshots
+
+### Encryption Output
+![Encrypted File](screenshots/encrypted.png)
+
+
 ## Author
 Akash A S  
 B.Tech Computer Science & Engineering
