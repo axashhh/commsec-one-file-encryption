@@ -23,10 +23,28 @@ modified AES-based approach (EE-AES) for educational purposes.
 This project is intended strictly for academic and learning purposes.
 It is not a commercial or military-grade product.
 
-## 📸 Screenshots
+## 📸 Application Screenshots
 
-### Encryption Output
+### 🔐 Secure Login
+![Secure Login](screenshots/Secure%20Login.png)
+
+### 📝 Secure Signup
+![Secure Signup](screenshots/Secure%20Signup.png)
+
+### 📊 Dashboard
+![Dashboard](screenshots/Dashboard.png)
+
+### 🛂 Access Control
+![Access Control](screenshots/Access%20Control.png)
+
+### 🔒 Encryption Result
 ![Encrypted File](screenshots/encrypted.png)
+
+### 🔓 Decryption Result
+![Decrypted File](screenshots/decrypted.png)
+
+> Additional screenshots are available in the `screenshots` folder.
+
 
 
 ## Author
